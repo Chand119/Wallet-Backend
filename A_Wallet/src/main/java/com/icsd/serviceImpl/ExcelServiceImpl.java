@@ -106,7 +106,7 @@ public class ExcelServiceImpl implements ExcelService{
 		log.info("proccessing the sheet");
 		
 		DataFormatter dataFormatter=new DataFormatter();
-		for (Row row : sheet) {
+		for (Row row:sheet) {
 			
 			int num=row.getRowNum();
 			String email=row.getCell(0).getStringCellValue();
@@ -114,6 +114,7 @@ public class ExcelServiceImpl implements ExcelService{
 				continue;
 			}
 			if(!existingEmails.contains(email) && !processedCustomers.containsKey(email)){
+				System.out.println("num"+num);
 				Address address=Address.builder()
 						.addressLine1(row.getCell(8).getStringCellValue())
 						.addressLine2(row.getCell(9).getStringCellValue())
@@ -134,7 +135,7 @@ public class ExcelServiceImpl implements ExcelService{
 	                    .password(dataFormatter.formatCellValue(row.getCell(7)))
 	                    .address(address)
 	                    .build();
-				System.out.println(row.getCell(6).getStringCellValue());
+				
 				
 				processedCustomers.put(email, customer);
 				customersToAdd.add(customer);

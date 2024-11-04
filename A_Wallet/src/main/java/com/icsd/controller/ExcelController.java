@@ -2,6 +2,9 @@ package com.icsd.controller;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -50,8 +53,8 @@ public class ExcelController {
 	    
 	    ByteArrayInputStream inputStream = excelService.generateExcelSheet(lst);
 	    InputStreamResource file= new InputStreamResource(inputStream);
-	    String fileName = "customers.xlsx";
-	    String contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	    String fileName="customers.xlsx";
+	    String contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 	    return ResponseEntity.ok()
 	            .contentType(MediaType.parseMediaType(contentType))
@@ -65,11 +68,17 @@ public class ExcelController {
 	public ResponseEntity<ApiResponse> uploadExcelFile(@RequestParam("file") MultipartFile file){
 		String fileName=file.getOriginalFilename();
 		
-		if(file.getSize()==0|| file.isEmpty()||fileName == null || (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx"))) {
-			return new ResponseEntity<ApiResponse>(new ApiResponse(HttpStatus.BAD_REQUEST.value(),"File is Empty/Invalid File",null),HttpStatus.BAD_REQUEST);
+		if(file.isEmpty()||fileName==null || (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx"))) {
+			return new ResponseEntity<ApiResponse>(new ApiResponse(HttpStatus.BAD_REQUEST.value(),"File is Empty/Invalid File(only Excel file is allowed)",null),HttpStatus.BAD_REQUEST);
 		}
 		try {
-			
+			if(file.getSize()>0) {
+				Workbook workbook=WorkbookFactory.create(file.getInputStream());
+				if(workbook.getNumberOfSheets()==0 || workbook.getSheetAt(0).getPhysicalNumberOfRows()==0) {
+					 return new ResponseEntity<>(new ApiResponse(HttpStatus.BAD_REQUEST.value(), "The Excel file is empty.", null), HttpStatus.BAD_REQUEST);
+				}
+				
+			}
 			List<String> emails=excelService.saveDataToDatabase(file);
 			if(ObjectUtils.isEmpty(emails)) {
 				return new ResponseEntity<ApiResponse>(new ApiResponse(HttpStatus.OK.value(), "Data Saved Successfully", emails),HttpStatus.OK);

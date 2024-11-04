@@ -12,5 +12,5 @@ public class AWalletApplication {
 		SpringApplication.run(AWalletApplication.class, args);
 		
 	}
-
+	
 }
