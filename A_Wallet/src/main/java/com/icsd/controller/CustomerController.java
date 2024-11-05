@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping(value = "/customer")
-@CrossOrigin(value = "*")
+@CrossOrigin(value="*") 
 @Slf4j
 public class CustomerController {
 	/*
@@ -185,7 +186,31 @@ public class CustomerController {
 	
 	
 	
+	@GetMapping("/getAllCustomersWithPagination/{pagesize}/{offset}")
+	public ResponseEntity<ApiResponse> getCustomersWithPagination(@PathVariable("pagesize") int pageSize,@PathVariable("offset") int offSet){
+		
+		List<Customer> customers=customerservice.getCustomerWithPagination(pageSize, offSet);
+		if(ObjectUtils.isEmpty(customers)) {
+			return new ResponseEntity<ApiResponse>(new ApiResponse(HttpStatus.NOT_FOUND.value(),"No Data Found",null),HttpStatus.NOT_FOUND);
+		}
+		
+		ApiResponse apiResponse=new ApiResponse(HttpStatus.OK.value(), "Customers fetched", customers);
+				
+		return  new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.OK);
+	}
 	
+	
+	@GetMapping(value="/getAllCustomersWithPaginationAndSorting/{field}/{pagesize}/{offset}")
+	public ResponseEntity<ApiResponse> getAllCustomersWithPaginationAndSorting(@PathVariable("field") String field,@PathVariable("pagesize") int pageSize,@PathVariable("offset") int offSet){
+		List<Customer> customers=customerservice.getCustomersWithPaginationAndSorting(field, pageSize, offSet);
+		
+		
+		ApiResponse apiResponse= new  ApiResponse(HttpStatus.OK.value(),customers.size()==0? "Customer's Data is Empty":"Customers Fetched",customers);
+		
+		return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.OK);
+	}
+	
+
 	
 	
 

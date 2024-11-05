@@ -2,6 +2,8 @@ package com.icsd.exception;
 
 
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -65,4 +67,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ApiResponse(HttpStatus.NOT_ACCEPTABLE.value(), ex.getMessage()),
                 HttpStatus.BAD_REQUEST);
     } 
+    
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+        
+        StringBuilder errorMessage = new StringBuilder();
+        ex.getConstraintViolations().forEach(violation -> {
+            errorMessage
+                        .append("")
+                        .append(violation.getMessage());      
+        });
+
+        ApiResponse apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST.value(), errorMessage.toString(), null);
+        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+    }
 }

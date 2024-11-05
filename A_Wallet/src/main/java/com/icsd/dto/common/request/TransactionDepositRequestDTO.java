@@ -5,9 +5,9 @@ package com.icsd.dto.common.request;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 
+import com.icsd.custom.annotation.ValidateCustomerId;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 public class TransactionDepositRequestDTO {
 
 	@Min(value=1,message="customer id should not be 0 ")
+	@ValidateCustomerId
 	int customerId;
 	
 	@Min(value=1,message ="acount number shoulde not be 0 ")

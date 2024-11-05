@@ -16,6 +16,7 @@ public interface CustomerRepo extends JpaRepository<Customer, Integer> {
 	public Optional<Customer> findByEmailIdAndPassword(String email, String password);
 	
 	public Optional<Customer> findByEmailId(String email);
+	public boolean existsById(int customerId);
 	
 //	SELECT * FROM movie WHERE title LIKE '%in%';
 	

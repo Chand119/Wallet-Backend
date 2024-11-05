@@ -40,7 +40,12 @@ public interface CustomerService {
 	
 	public void sendEmailOfExpiry();
 	
+	public boolean isValidCustomerId(int customerId);
+	
 	public List<String> getEmailsofAllCustomers();
 
+	public List<Customer> getCustomerWithPagination(int pageSize ,int offSet);
+	
+	public List<Customer> getCustomersWithPaginationAndSorting(String field,int pageSize,int offSet);
 
 }

@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Data
 @RequestMapping("/address")
-@CrossOrigin(value = "*")
+@CrossOrigin(value="*")
 public class AddressController {
 	
 	@Autowired

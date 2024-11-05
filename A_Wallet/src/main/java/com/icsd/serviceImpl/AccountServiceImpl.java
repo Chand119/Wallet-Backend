@@ -38,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
 		
 		log.info("create a new account");
 		
-		Optional<Customer> optionalCust= customerRepo.findById(Integer.parseInt(accReq.getCustomerId()));
+		Optional<Customer> optionalCust= customerRepo.findById(accReq.getCustomerId());
 		if(!optionalCust.isPresent())//If a value is present, returns true, otherwise false.
 		{
 			//it means customer is not ther in db
@@ -46,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
 		}
 		
 		Customer cust=optionalCust.get();
-		cust.setCustomerId(Integer.parseInt(accReq.getCustomerId()));
+		cust.setCustomerId(accReq.getCustomerId());
 		
 		Account account=Account.builder()
 				.accountType(accReq.getAccountType())

@@ -7,6 +7,10 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -32,6 +36,9 @@ public class CustomerServiceImpl implements CustomerService {
 	private final CustomerRepo customerRepo;
 	
 
+	
+	 @Value("${expiry.days}")
+	   private int expiryDays; 
 	private final AddressRepo addressRepo;
 
 	@Override
@@ -98,7 +105,7 @@ public class CustomerServiceImpl implements CustomerService {
 		
 		
 		Customer cust=Customer.builder().firstName(crDto.getFirstName()).lastName(crDto.getLastName()).emailId(crDto.getEmailId())
-				.contactNo(crDto.getContactNo()).address(addCreated).gender(crDto.getGender()).password(crDto.getPassword()).registrationDate(LocalDate.now()).build();
+				.contactNo(crDto.getContactNo()).address(addCreated).gender(crDto.getGender()).password(crDto.getPassword()).registrationDate(LocalDate.now()).expiryDate(LocalDate.now().plusDays(expiryDays)).build();
 		
 		log.info("Cust enttity saved",cust);;
 		Customer custCreated=customerRepo.save(cust);
@@ -199,6 +206,32 @@ public class CustomerServiceImpl implements CustomerService {
 	public List<String> getEmailsofAllCustomers() {
 		
 		return customerRepo.getAllEmails();
+	}
+
+
+	@Override
+	public List<Customer> getCustomerWithPagination(int pageSize, int offSet) {
+		PageRequest pageRequest=PageRequest.of(offSet, pageSize);
+		Page<Customer>lst=customerRepo.findAll(pageRequest);
+		
+		
+		return lst.getContent();//slice
+	}
+
+
+	@Override
+	public List<Customer> getCustomersWithPaginationAndSorting(String field, int pageSize, int offSet) {
+		PageRequest pageRequest=PageRequest.of(offSet, pageSize, Sort.by(field).ascending());
+		Page<Customer> customers=customerRepo.findAll(pageRequest);
+		
+		
+		return customers.getContent();
+	}
+
+
+	@Override
+	public boolean isValidCustomerId(int customerId) {
+		return customerRepo.existsById(customerId);
 	}
 
 }

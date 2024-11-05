@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.icsd.custom.annotation.ValidateCustomerId;
 import com.icsd.model.AccountType;
 
 import lombok.AllArgsConstructor;
@@ -25,7 +26,8 @@ public class AccountRequestDTO {
 //	
 	@NotBlank(message="customer id should not be blank")
 	@NotNull(message="customer id should not be null")
-	private String customerId;
+	@ValidateCustomerId
+	private int customerId;
 	
 	private AccountType accountType;
 	

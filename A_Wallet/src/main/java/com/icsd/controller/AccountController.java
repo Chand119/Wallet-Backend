@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.icsd.custom.annotation.ValidateCustomerId;
 import com.icsd.dto.common.ApiResponse;
 import com.icsd.dto.common.request.AccountRequestDTO;
 import com.icsd.model.Account;
@@ -33,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value="/account")
 @CrossOrigin(value = "*")
 @Slf4j
-
+@Validated
 
 
 public class AccountController {
@@ -53,16 +55,20 @@ public class AccountController {
 	}
 	
 	@GetMapping(value="/getAccount/{customerId}")
-	public ResponseEntity<ApiResponse> getAllAccountsByCustomerId(@PathVariable int customerId) throws Exception
+	public ResponseEntity<ApiResponse> getAllAccountsByCustomerId(@PathVariable  @Valid @ValidateCustomerId int customerId) throws Exception
 	{
+		
+		
 		//query - should we use custome validation...?
+		
+		
 		log.info("get list of accounts by customer id "+ customerId);
 		List<Account> lstAccounts=accountService.getAccountsByCustId(customerId);
 		
 		if(lstAccounts.isEmpty())
 		{
 			ApiResponse apirsponse=new ApiResponse(HttpStatus.NO_CONTENT.value(), "No Accounts found for customer id "+ customerId, null);
-			return new ResponseEntity<ApiResponse>(apirsponse,HttpStatus.OK);
+			return new ResponseEntity<ApiResponse>(apirsponse,HttpStatus.NO_CONTENT);
 		}
 		ApiResponse apirsponse=new ApiResponse(HttpStatus.FOUND.value(), "list of accounts", lstAccounts);
 		
